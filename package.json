@@ -2,6 +2,7 @@
   "name": "qflarebot-plugins",
   "private": true,
   "description": "QFlareBot 插件目录：登记条目、校验规则与索引生成",
+  "license": "MIT",
   "type": "module",
   "engines": {
     "node": ">=22"
