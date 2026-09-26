@@ -1,0 +1,14 @@
+{
+  "name": "qflarebot-plugins",
+  "private": true,
+  "description": "QFlareBot 插件目录：登记条目、校验规则与索引生成",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test 'scripts/*.test.mjs'",
+    "check": "node scripts/check.mjs",
+    "index": "node scripts/build-index.mjs --out site/index.json --previous https://qflarebot.github.io/plugins/index.json"
+  }
+}

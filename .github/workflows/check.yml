@@ -1,0 +1,56 @@
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 插件构建要执行投稿人的代码：只给读权限，fork 来的 PR 本来也拿不到密钥
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # --changed 要跟 base 分支比
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm test
+
+      # 不联网的规则先跑：条目格式、撞名、保留名
+      - run: node scripts/check.mjs
+
+      # 构建检查用框架自己的构建脚本，和机器人构建机是同一套
+      - name: 拉取 QFlareBot
+        if: github.event_name == 'pull_request'
+        run: git clone --depth 1 https://github.com/QFlareBot/QFlareBot .cache/QFlareBot
+
+      - uses: pnpm/action-setup@v4
+        if: github.event_name == 'pull_request'
+        with:
+          package_json_file: .cache/QFlareBot/package.json
+
+      # 只装构建插件用得到的：种子应用的构建脚本，加 plugin-cli 与它依赖的 SDK
+      - name: 构建 plugin-cli
+        if: github.event_name == 'pull_request'
+        working-directory: .cache/QFlareBot
+        run: |
+          pnpm install --frozen-lockfile --filter @qqbot/seed --filter '@qqbot/plugin-cli...'
+          pnpm --filter '@qqbot/plugin-cli...' build
+
+      - name: 核对并构建改到的插件
+        if: github.event_name == 'pull_request'
+        run: node scripts/check.mjs --changed origin/${{ github.base_ref }} --build .cache/QFlareBot
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
