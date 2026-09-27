@@ -14,9 +14,10 @@ describe('checkEntry', () => {
     assert.match(checkEntry('foo.yaml', { repo: 'me/x' })[0], /<name>\.json/)
   })
 
-  it('保留名按表前缀比较', () => {
+  it('内置插件和框架组件的名字保留，去掉的演示插件名可以登记', () => {
     assert.match(checkEntry('t2i.json', { repo: 'me/x' })[0], /保留名/)
-    assert.match(checkEntry('multi_reply.json', { repo: 'me/x' })[0], /保留名/)
+    assert.match(checkEntry('qflarebot.json', { repo: 'me/x' })[0], /保留名/)
+    assert.deepEqual(checkEntry('multi_reply.json', { repo: 'me/x' }), [])
   })
 
   it('只认 repo、subdir、tags', () => {

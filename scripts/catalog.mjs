@@ -13,10 +13,10 @@ export const REPO_PATTERN = /^[A-Za-z0-9-]+\/[A-Za-z0-9._-]+$/
 export const PACKAGE_PREFIX = 'qflarebot-plugin-'
 
 /**
- * 保留名：前六个是框架内置插件（装上同名的会顶掉内置那一份），其余容易被当成框架自己的组件。
- * 比较时走 nameKey，`multi_reply` 也算撞上 `multi-reply`。
+ * 保留名：前两个是框架内置插件（装上同名的会顶掉内置那一份），其余容易被当成框架自己的组件。
+ * 比较时走 nameKey（`-` 当成 `_`）。
  */
-export const RESERVED_NAMES = ['echo', 'multi-reply', 'image', 'keyboard', 'sid', 't2i', 'qqbot', 'qflarebot', 'core', 'admin', 'system', 'runtime']
+export const RESERVED_NAMES = ['sid', 't2i', 'qqbot', 'qflarebot', 'core', 'admin', 'system', 'runtime']
 
 const ENTRY_KEYS = new Set(['repo', 'subdir', 'tags'])
 export const MAX_TAGS = 5
